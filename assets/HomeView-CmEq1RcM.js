@@ -1,9 +1,9 @@
-import{d as n,c as a,a as r,o as s,b as c,u as l,_ as i}from"./index-C6HV4SKy.js";const h=""+new URL("example-B_uq3Jhe.jpg",import.meta.url).href,m={class:"markdown-body"},p=n({__name:"README",setup(o,{expose:d}){return d({frontmatter:{},excerpt:void 0}),(t,e)=>(s(),a("div",m,e[0]||(e[0]=[r(`<h1>html-to-pdf 文档手册</h1><p>本库致力于 html 在线导出为 pdf，实现智能分页效果，不会切断文本图片表格等内容，可兼容手机端。本库依赖 html2canvas 和 jspdf，使用 canvas 绘图，请保证使用浏览器对以上库是支持的。</p><h3>安装</h3><pre><code class="language-bash"># 使用npm
-npm i -S ai-html-to-pdf
+import{d as n,c as a,a as r,o as s,b as c,u as l,_ as i}from"./index-btfNfU3_.js";const h=""+new URL("example-B_uq3Jhe.jpg",import.meta.url).href,m={class:"markdown-body"},p=n({__name:"README",setup(o,{expose:d}){return d({frontmatter:{},excerpt:void 0}),(t,e)=>(s(),a("div",m,e[0]||(e[0]=[r(`<h1>html-to-pdf 使用说明</h1><p>本库致力于 html 在线导出为 pdf，实现智能分页效果，不会切断文本图片表格等内容，可兼容手机端。本库依赖 html2canvas 和 jspdf，使用 canvas 绘图，请保证使用浏览器对以上库是支持的。</p><h3>安装</h3><pre><code class="language-bash"># 使用npm
+npm i -S @wk-tools/html-to-pdf
 # 使用yarn
-yarn add ai-html-to-pdf
+yarn add @wk-tools/html-to-pdf
 </code></pre><h3>用法</h3><pre><code class="language-ts">// ...
-import htmlToPdf from &#39;ai-html-to-pdf&#39;
+import htmlToPdf from &#39;@wk-tools/html-to-pdf&#39;
 
 function exportPDF() {
   Loading.show()
