@@ -9,7 +9,6 @@ function execDeploy() {
   const git = SimpleGit(resolve(Config.gitDir))
   return git
     .init()
-
     .add('./*')
     .commit('deploy: ' + getDeployDate())
     .branch(['-M', Config.branch])

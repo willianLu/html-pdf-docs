@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@arco-design/web-vue": "^2.57.0",
-    "ai-html-to-pdf": "^0.1.0",
+    "ai-html-to-pdf": "^0.2.0",
     "echarts": "^5.6.0",
     "github-markdown-css": "^5.8.1",
     "nprogress": "^0.2.0",
