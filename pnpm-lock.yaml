@@ -49,8 +49,8 @@ importers:
         specifier: ^22.13.1
         version: 22.13.10
       '@types/nprogress':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.2.3
+        version: 0.2.3
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.1(vite@6.2.2(@types/node@22.13.10)(jiti@2.4.2)(less@4.2.2))(vue@3.5.13(typescript@5.7.3))
@@ -969,8 +969,8 @@ packages:
   '@types/node@22.13.10':
     resolution: {integrity: sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==}
 
-  '@types/nprogress@0.2.0':
-    resolution: {integrity: sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==}
+  '@types/nprogress@0.2.3':
+    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
 
   '@types/raf@3.4.3':
     resolution: {integrity: sha512-c4YAvMedbPZ5tEyxzQdMoOhhJ4RD3rngZIdwC2/qDN3d7JpEhB6fiBRKVY1lg5B7Wk+uPBjn5f39j1/2MY1oOw==}
@@ -4774,7 +4774,7 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
-  '@types/nprogress@0.2.0': {}
+  '@types/nprogress@0.2.3': {}
 
   '@types/raf@3.4.3':
     optional: true

@@ -1,7 +1,7 @@
 <template>
   <main class="wk-layout">
     <WkHeader></WkHeader>
-    <section class="wk-main">
+    <section ref="main" class="wk-main">
       <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
@@ -12,10 +12,18 @@
   </main>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import WkHeader from './header.vue'
 import WkFooter from './footer.vue'
+
 defineOptions({
   name: 'LayoutComponent',
+})
+const main = ref<HTMLElement>()
+
+onBeforeRouteUpdate(() => {
+  main.value?.scrollTo({ top: 0 })
 })
 </script>
 <style lang="less" scoped>
