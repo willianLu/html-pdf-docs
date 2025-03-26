@@ -9,8 +9,10 @@ function execDeploy() {
   const git = SimpleGit(resolve(Config.gitDir))
   return git
     .init()
+
     .add('./*')
     .commit('deploy: ' + getDeployDate())
+    .branch(['-M', Config.branch])
     .push(['-f', Config.gitUrl, Config.branch])
 }
 
@@ -22,7 +24,7 @@ export async function deploy() {
   Log.info('开始代码构建')
   await execa('npm', ['run', 'build'], {
     cwd: resolve(),
-    stdio: 'inherit'
+    stdio: 'inherit',
   })
   Log.success('代码构建成功')
   Log.info('开始部署代码')
