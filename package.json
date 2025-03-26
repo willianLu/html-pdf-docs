@@ -52,7 +52,7 @@
     "vue-tsc": "^2.2.0"
   },
   "nano-staged": {
-    "*.{ts,tsx,js,vue,less}": "prettier --write",
+    "src/**/*.{ts,tsx,js,vue,less}": "prettier --write",
     "src/**/*.{ts,tsx,js,vue}": "eslint --fix"
   }
 }
