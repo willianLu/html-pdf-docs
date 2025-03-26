@@ -34,14 +34,14 @@
       </div>
     </div>
     <div class="wk-demo" ref="box">
-      <FirstDemo ref="pdfWrap" v-if="compId === 'first'"></FirstDemo>
-      <ReportDemo ref="pdfWrap" v-if="compId === 'report'"></ReportDemo>
-      <PhotoDemo ref="pdfWrap" v-if="compId === 'photo'"></PhotoDemo>
+      <KeepAlive>
+        <component :is="comp" ref="pdfWrap"></component>
+      </KeepAlive>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import FirstDemo from './components/first.vue'
 import ReportDemo from './components/report.vue'
 import PhotoDemo from './components/photo.vue'
@@ -56,25 +56,30 @@ defineOptions({
 interface CompItem {
   id: string
   name: string
+  component: typeof FirstDemo
 }
 const pdfWrap = ref()
-const box = ref()
+const box = shallowRef()
 const compList: CompItem[] = [
   {
     id: 'first',
     name: '沁园春雪',
+    component: FirstDemo,
   },
   {
     id: 'report',
     name: '报告',
+    component: ReportDemo,
   },
   {
     id: 'photo',
     name: '图册',
+    component: PhotoDemo,
   },
 ]
 const compId = ref(compList[0].id)
 const fileName = ref(compList[0].name)
+const comp = shallowRef(compList[0].component)
 const isAdaptive = ref(true)
 
 const rect = useWindowSize()
@@ -86,6 +91,7 @@ function handleSelectComponent(item: CompItem) {
   if (compId.value === item.id) return
   compId.value = item.id
   fileName.value = item.name
+  comp.value = item.component
 }
 async function exportPdf() {
   Loading.show()
