@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import WkLoayout from '@/components/layout.vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 // 处理路由信息
 export const routes: RouteRecordRaw[] = [
@@ -29,6 +31,15 @@ export const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  next()
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router
