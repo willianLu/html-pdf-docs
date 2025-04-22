@@ -16,6 +16,12 @@ defineOptions({
 </script>
 <style lang="less" scoped>
 .wk-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 100%;
+  height: 50px;
   background-color: #fff;
   border-bottom: 1px solid #eee;
   &__content {

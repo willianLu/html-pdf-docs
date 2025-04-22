@@ -28,8 +28,19 @@
         >
       </div>
       <h2 class="wk-feature__operate">操作栏</h2>
-      <div class="export-btn flex-center-space-between">
-        <div>自适应：<a-switch v-model="isAdaptive" /></div>
+      <div class="export-btn">
+        <a-checkbox v-model="isPageHeader" @change="handleResetHtmlPdf">页眉</a-checkbox>
+        <a-checkbox v-model="isPageFooter" @change="handleResetHtmlPdf">页脚</a-checkbox>
+        <a-checkbox v-model="isCover" @change="handleResetHtmlPdf">封面</a-checkbox>
+        <a-checkbox v-model="isBackCover" @change="handleResetHtmlPdf">封底</a-checkbox>
+      </div>
+      <div class="export-btn">
+        <div>自适应：<a-switch v-model="isAdaptive" @change="handleResetHtmlPdf" /></div>
+      </div>
+      <div class="export-btn flex-v-center">
+        <a-button type="primary" size="small" @click="handlePreview" style="margin-right: 16px"
+          >预览</a-button
+        >
         <a-button type="primary" size="small" status="success" @click="exportPdf">导出</a-button>
       </div>
     </div>
@@ -45,10 +56,17 @@ import { computed, ref, shallowRef } from 'vue'
 import FirstDemo from './components/first.vue'
 import ReportDemo from './components/report.vue'
 import PhotoDemo from './components/photo.vue'
-import htmlToPdf from '@wk-tools/html-to-pdf'
+import HtmlToPdf, {
+  CoverPlugin,
+  type PdfOptions,
+  type CoverPluginOptions,
+} from '@wk-tools/html-to-pdf'
 import Loading from '@/components/Loading'
 import useWindowSize from '@/hooks/useWindowSize'
 import { Message } from '@arco-design/web-vue'
+import WkLogo from '@/assets/imgs/wk-logo.png'
+import * as echarts from 'echarts'
+import CoverBg from '@/assets/imgs/cover.jpg'
 
 defineOptions({
   name: 'DemoPage',
@@ -80,6 +98,10 @@ const compList: CompItem[] = [
 const compId = ref(compList[0].id)
 const fileName = ref(compList[0].name)
 const comp = shallowRef(compList[0].component)
+const isPageHeader = ref(true)
+const isPageFooter = ref(true)
+const isCover = ref(true)
+const isBackCover = ref(true)
 const isAdaptive = ref(true)
 
 const rect = useWindowSize()
@@ -87,16 +109,58 @@ const isMobile = computed(() => {
   return rect.width.value < 768
 })
 
+let htmlToPdf: HtmlToPdf | null = null
+
 function handleSelectComponent(item: CompItem) {
   if (compId.value === item.id) return
+  htmlToPdf = null
   compId.value = item.id
   fileName.value = item.name
   comp.value = item.component
+  window.scrollTo(0, 0)
+}
+function handleResetHtmlPdf() {
+  htmlToPdf = null
+}
+async function handlePreview() {
+  initHtmlToPdf()
+  if (!htmlToPdf) {
+    Message.error('预览失败')
+    return
+  }
+  Loading.show()
+
+  await htmlToPdf
+    .preview()
+    .catch(() => {
+      Message.error('下载失败')
+    })
+    .finally(() => {
+      Loading.hide()
+    })
 }
 async function exportPdf() {
+  initHtmlToPdf()
+  if (!htmlToPdf) {
+    Message.error('导出失败')
+    return
+  }
   Loading.show()
-  htmlToPdf(pdfWrap.value.$el, {
+  await htmlToPdf
+    .save()
+    .catch(() => {
+      Message.error('下载失败')
+    })
+    .finally(() => {
+      Loading.hide()
+    })
+}
+function initHtmlToPdf() {
+  if (!pdfWrap.value || htmlToPdf) return
+  const params: PdfOptions = {
     name: fileName.value,
+    margin: [16, 10],
+    monoblockClassName: ['arco-list-item', 'html-pdf-monoblock'],
     ignoreElement(el: Element) {
       const children: Element[] = []
       if (el.tagName.toLowerCase() === 'table') {
@@ -108,6 +172,7 @@ async function exportPdf() {
         }
         return children
       } else if (el.classList.contains('html-pdf-grid') && el.children.length) {
+        // 图册高度不同，找最高逻辑
         const mp: Record<string, Element> = {}
         let min = 0
         let max = 0
@@ -133,38 +198,51 @@ async function exportPdf() {
     adaptiveOptions: {
       parentElement: box.value,
       async resetView(element: Element) {
-        if (compId.value === 'report') {
-          const arr = element.querySelectorAll('.chart-item')
-          if (arr[0]) {
-            pdfWrap.value.resetMelonChart(arr[0])
+        const cEl = element.querySelectorAll('.chart-item')
+        cEl.forEach((item) => {
+          const chart = echarts.getInstanceByDom(item as HTMLElement)
+          if (chart) {
+            const options = chart.getOption()
+            item.setAttribute('_echarts_instance_', '')
+            echarts.init(item as HTMLElement).setOption(options)
           }
-          if (arr[1]) {
-            pdfWrap.value.resetVegetableChart(arr[1])
-          }
-        }
+        })
       },
     },
-    header: '中华文化',
-    footer: '第{page}页',
-  })
-    .then(() => {
-      Message.success('导出成功')
-    })
-    .catch((error: Error) => {
-      console.log(error)
-      Message.error('导出失败')
-    })
-    .finally(() => {
-      if (compId.value === 'report' && isAdaptive.value) {
-        pdfWrap.value.resetMelonChart()
-        pdfWrap.value.resetVegetableChart()
-      }
-      Loading.hide()
-    })
+  }
+  if (isPageHeader.value) {
+    params.header = {
+      image: WkLogo,
+      imageWidth: 40,
+      imageHeight: 10,
+    }
+  }
+  if (isPageFooter.value) {
+    params.footer = {
+      text: '第{page}页',
+    }
+  }
+  htmlToPdf = new HtmlToPdf(pdfWrap.value.$el, params)
+  const coverOptions: CoverPluginOptions = {}
+  if (isCover.value) {
+    coverOptions.cover = {
+      image: CoverBg,
+    }
+  }
+  if (isBackCover.value) {
+    coverOptions.backcover = {
+      backgroundColor: '#88D2D7',
+      text: '这是个封底',
+    }
+  }
+  if (coverOptions.cover || coverOptions.backcover) {
+    htmlToPdf.use(CoverPlugin, coverOptions)
+  }
 }
 </script>
 <style lang="less" scoped>
 .wk-content {
+  position: relative;
   padding: 10px 0;
   margin: 0 auto;
   display: flex;
@@ -176,7 +254,7 @@ async function exportPdf() {
   .wk-feature {
     margin-bottom: 10px;
     margin-right: 0;
-    top: 0;
+    top: 50px;
     width: 100%;
   }
 }
@@ -190,7 +268,7 @@ async function exportPdf() {
 }
 .wk-feature {
   position: sticky;
-  top: 10px;
+  top: 60px;
   right: 0;
   z-index: 1;
   flex-shrink: 0;
@@ -238,11 +316,12 @@ async function exportPdf() {
     border-bottom: 1px solid #eee;
   }
   &__operate {
+    margin-bottom: 12px;
     border-top: 1px solid #eee;
   }
 }
 .export-btn {
-  padding: 12px 0;
+  padding: 0 0 12px;
 }
 .wk-demo :deep(.wk-section) {
   font-size: 16px;

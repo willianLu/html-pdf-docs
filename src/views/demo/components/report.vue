@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import * as echats from 'echarts'
+import * as echarts from 'echarts'
 import useWindowSize from '@/hooks/useWindowSize'
 import { networkImageToLocal } from '@/utils'
 import Loading from '@/components/Loading'
@@ -224,14 +224,14 @@ watch(rect.width, () => {
 })
 function initChart() {
   if (melonChartEl.value) {
-    initMelonChart(melonChartEl.value)
+    initMelonChart()
   }
   if (vegetableChartEl.value) {
-    initVegetableChart(vegetableChartEl.value)
+    initVegetableChart()
   }
 }
-function initMelonChart(el: HTMLElement) {
-  melonChart = echats.init(el)
+function initMelonChart() {
+  melonChart = echarts.init(melonChartEl.value)
   melonChart.setOption({
     xAxis: {
       type: 'category',
@@ -249,8 +249,8 @@ function initMelonChart(el: HTMLElement) {
     ],
   })
 }
-function initVegetableChart(el: HTMLElement) {
-  vegetableChart = echats.init(el)
+function initVegetableChart() {
+  vegetableChart = echarts.init(vegetableChartEl.value)
   vegetableChart.setOption({
     xAxis: {
       type: 'category',
@@ -268,16 +268,4 @@ function initVegetableChart(el: HTMLElement) {
     ],
   })
 }
-function resetMelonChart(el?: HTMLElement) {
-  melonChart?.dispose()
-  initMelonChart(el || melonChartEl.value)
-}
-function resetVegetableChart(el?: HTMLElement) {
-  vegetableChart?.dispose()
-  initVegetableChart(el || vegetableChartEl.value)
-}
-defineExpose({
-  resetMelonChart,
-  resetVegetableChart,
-})
 </script>
